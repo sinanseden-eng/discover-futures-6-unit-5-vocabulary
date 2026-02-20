@@ -127,10 +127,10 @@
             // When deploying to Netlify, DO NOT paste your API key here.
             // Instead, set up a Netlify Serverless Function (e.g., /.netlify/functions/gemini)
             // and have this fetch() call route to your secure backend endpoint.
-            const apiKey = ""; 
             
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const payload = { contents: [{ parts: [{ text: prompt }] }] };
+            
+            const apiUrl = `/.netlify/functions/gemini`;
+            const payload = { prompt: prompt };
 
             for (let i = 0; i < maxRetries; i++) {
                 try {
