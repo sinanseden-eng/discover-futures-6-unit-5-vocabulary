@@ -121,7 +121,14 @@
 
         async function callGeminiWithExponentialBackoff(prompt, maxRetries = 5) {
             let delay = 1000;
-            const apiKey = ""; // API key is handled by the environment
+            
+            // NETLIFY DEPLOYMENT NOTE: 
+            // In this Canvas, the execution environment injects the key automatically. 
+            // When deploying to Netlify, DO NOT paste your API key here.
+            // Instead, set up a Netlify Serverless Function (e.g., /.netlify/functions/gemini)
+            // and have this fetch() call route to your secure backend endpoint.
+            const apiKey = ""; 
+            
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             const payload = { contents: [{ parts: [{ text: prompt }] }] };
 
