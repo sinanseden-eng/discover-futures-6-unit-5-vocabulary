@@ -14,12 +14,12 @@ export const handler = async (event) => {
     if (!apiKey) {
       return { 
           statusCode: 500, 
-          body: JSON.stringify({ error: "Missing API Key in Netlify Settings" }) 
+          body: JSON.stringify({ error: { message: "Missing API Key in Netlify Settings" } }) 
       };
     }
 
-    // Connect to Google Gemini
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+    // 🚨 CRITICAL FIX 1: Use the standard public model 'gemini-1.5-flash'
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     const payload = { contents: [{ parts: [{ text: userPrompt }] }] };
 
     const response = await fetch(apiUrl, {
@@ -30,7 +30,15 @@ export const handler = async (event) => {
 
     const data = await response.json();
 
-    // Send the result back to our HTML file
+    // 🚨 CRITICAL FIX 2: If Google throws an error (e.g., 400 or 403), forward that exact error status to the frontend!
+    if (!response.ok) {
+        return {
+            statusCode: response.status,
+            body: JSON.stringify(data)
+        };
+    }
+
+    // Success! Send the result back to our HTML file
     return {
       statusCode: 200,
       body: JSON.stringify(data)
@@ -39,7 +47,7 @@ export const handler = async (event) => {
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: error.message })
+      body: JSON.stringify({ error: { message: error.message } })
     };
   }
 };
